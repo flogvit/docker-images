@@ -11,16 +11,14 @@ ADD requirements.txt /
 RUN pip3 install --upgrade pip
 RUN pip3 install -r requirements.txt
 
-# setup juptyer
+# setup jupyter
 RUN jupyter nbextension enable --py --sys-prefix widgetsnbextension
 RUN jupyter contrib nbextension install --user
 RUN jupyter nbextension enable codefolding/main
-RUN echo "c.NotebookApp.ip = '*'" >> /root/.jupyter/jupyter_notebook_config.py
-RUN echo "c.NotebookApp.port = 8080" >> /root/.jupyter/jupyter_notebook_config.py
-RUN echo "c.NotebookApp.token = ''" >> /root/.jupyter/jupyter_notebook_config.py
-RUN echo "c.NotebookApp.notebook_dir = '/notebook'" >> /root/.jupyter/jupyter_notebook_config.py
-RUN mkdir -p /notebook
 
-WORKDIR /root
+RUN mkdir -p /notebooks && chmod a+rwx /notebooks
+RUN mkdir /.local && chmod a+rwx /.local
+
+WORKDIR /notebooks
 EXPOSE 8080 7007
-CMD ["jupyter", "notebook", "--no-browser", "--allow-root"]
+CMD ["bash", "-c", "jupyter notebook --notebook-dir=/notebooks --ip 0.0.0.0 --no-browser --allow-root"]
